@@ -22,7 +22,7 @@ export const sendMail = async (req, res) => {
     oAuth2Client.setCredentials({ refresh_token: user.refreshToken });
     const { token } = await oAuth2Client.getAccessToken();
     //  Normalize file path
- const normalizedPath = req.file.path.replace(/\\/g, '/');
+     const normalizedPath = req.file ? req.file.path.replace(/\\/g, '/') : null;
     // Send Gmail
     await sendGmail(token, to, subject, message, normalizedPath);
 

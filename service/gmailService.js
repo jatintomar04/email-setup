@@ -8,9 +8,37 @@ export const sendGmail = async (accessToken, to, subject, message, filePath = nu
 
   const gmail = google.gmail({ version: 'v1', auth: oAuth2Client });
 
-  const boundary = '__my_boundary__';
+  // If no attachment, send simple email
+  if (!filePath) {
+    const emailContent = [
+      `To: ${to}`,
+      `Subject: ${subject}`,
+      '',
+      message
+    ].join('\n');
 
-  let emailParts = [
+    const encodedMessage = Buffer.from(emailContent)
+      .toString('base64')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+
+    await gmail.users.messages.send({
+      userId: 'me',
+      requestBody: {
+        raw: encodedMessage
+      }
+    });
+
+    return;
+  }
+
+  // With attachment
+  const boundary = '__my_boundary__';
+  const fileName = path.basename(filePath);
+  const fileContent = fs.readFileSync(filePath).toString('base64');
+
+  const emailParts = [
     `To: ${to}`,
     `Subject: ${subject}`,
     'MIME-Version: 1.0',
@@ -20,23 +48,15 @@ export const sendGmail = async (accessToken, to, subject, message, filePath = nu
     'Content-Type: text/plain; charset="UTF-8"',
     '',
     message,
+    '',
+    `--${boundary}`,
+    'Content-Type: application/octet-stream',
+    `Content-Disposition: attachment; filename="${fileName}"`,
+    'Content-Transfer-Encoding: base64',
+    '',
+    fileContent,
+    `--${boundary}--`
   ];
-
-  if (filePath) {
-    const fileContent = fs.readFileSync(filePath).toString("base64");
-    const fileName = path.basename(filePath);
-
-    emailParts = emailParts.concat([
-      `--${boundary}`,
-      'Content-Type: application/octet-stream',
-      `Content-Disposition: attachment; filename="${fileName}"`,
-      'Content-Transfer-Encoding: base64',
-      '',
-      fileContent,
-    ]);
-  }
-
-  emailParts.push(`--${boundary}--`);
 
   const rawMessage = Buffer.from(emailParts.join('\n'))
     .toString('base64')
@@ -47,7 +67,7 @@ export const sendGmail = async (accessToken, to, subject, message, filePath = nu
   await gmail.users.messages.send({
     userId: 'me',
     requestBody: {
-      raw: rawMessage,
-    },
+      raw: rawMessage
+    }
   });
 };
