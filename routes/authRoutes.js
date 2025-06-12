@@ -13,10 +13,13 @@ router.get('/google',
   })
 );
 
-router.get('/google/callback',
+router.get(
+  '/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
   (req, res) => {
-    res.send('Successfully logged in with Google');
+    // Option 1: Redirect to frontend with success message as query param
+    const message = encodeURIComponent('Successfully logged in with Google');
+    res.redirect(`http://localhost:3001?message=${message}`);
   }
 );
 
