@@ -19,7 +19,7 @@ router.get(
   (req, res) => {
     // Option 1: Redirect to frontend with success message as query param
     const message = encodeURIComponent('Successfully logged in with Google');
-    res.redirect(`http://localhost:3001?message=${message}`);
+    res.redirect(`http://localhost:3001/email-setup?message=${message}`);
   }
 );
 
