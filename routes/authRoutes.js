@@ -1,7 +1,7 @@
 import express from 'express';
 import passport from 'passport';
 import { sendMail } from '../controller/mailController.js';
-import { upload } from '../controller/upload.js';
+import  upload  from '../controller/upload.js';
 
 const router = express.Router();
 

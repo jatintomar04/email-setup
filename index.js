@@ -39,12 +39,11 @@ app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 // Routes
 app.use('/auth', authRoutes);
 
-
 //all user routes 
 app.use("/api/users", userRoutes)
 
 // email by id
-app.use("/api/email", userRoutes)
+// app.use("/api/email", userRoutes)
 
 app.get('/', (req, res) => {
   res.send('Welcome to Google Auth + Gmail API');

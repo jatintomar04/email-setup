@@ -1,5 +1,5 @@
 import { google } from 'googleapis';
-import { sendGmail } from '../service/gmailService.js';
+import  {sendGmail}  from '../service/gmailService.js';
 import User from '../model/User.js';
 import Email from '../model/emailSchema.js'; 
 
@@ -21,18 +21,20 @@ export const sendMail = async (req, res) => {
 
     oAuth2Client.setCredentials({ refresh_token: user.refreshToken });
     const { token } = await oAuth2Client.getAccessToken();
-
+    //  Normalize file path
+ const normalizedPath = req.file.path.replace(/\\/g, '/');
     // Send Gmail
-    await sendGmail(token, to, subject, message, filePath);
+    await sendGmail(token, to, subject, message, normalizedPath);
 
-    const normalizedPath = req.file.path.replace(/\\/g, '/');
+   
     // ✅ Save email to DB
     const emailDoc = new Email({
       userId,
       to,
       subject,
       message,
-      filePath : normalizedPath,
+      filePath : normalizedPath || null,
+      sentAt: new Date()
     });
 
     await emailDoc.save();
