@@ -7,7 +7,7 @@ import './config/passport.js';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from "./routes/userRoutes.js"
 import path from "path"
-
+import cors from "cors"
 
 dotenv.config();
 conectDB()
@@ -22,6 +22,13 @@ app.use(session({
   saveUninitialized: false
 }));
 
+app.use(cors());
+// Or for more control:
+app.use(cors({
+  origin: '*',  // Allow all domains
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 app.use(passport.initialize());
 app.use(passport.session());
