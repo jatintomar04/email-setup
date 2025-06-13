@@ -27,7 +27,7 @@ export const sendMail = async (req, res) => {
     await sendGmail(token, to, subject, message, normalizedPath);
 
    
-    // ✅ Save email to DB
+    //  Save email to DB
     const emailDoc = new Email({
       userId,
       to,
@@ -39,9 +39,9 @@ export const sendMail = async (req, res) => {
 
     await emailDoc.save();
 
-    res.send("✅ Email sent & saved successfully!");
+    res.send(" Email sent & saved successfully!");
   } catch (err) {
-    console.error("❌ SendMail Error:", err);
+    console.error(" SendMail Error:", err);
     res.status(500).send("Failed to send email");
   }
 };
